@@ -72,9 +72,12 @@ func (llong *LlongDockerClient) GetRepoImages(repoName string) (*ecr.ListImagesO
 
 // GetImageConfig - returns image config from the label
 func (llong *LlongDockerClient) GetImageConfig(image string, tag string) (ImageConfig, error) {
-	tags := llong.getImageLabels(image, tag)
-	retIC := ImageConfig{}
 	var retErr error
+	retIC := ImageConfig{}
+	tags, err := llong.getImageLabels(image, tag)
+	if err != nil {
+		return retIC, err
+	}
 	if cStr, ok := tags[imageConfigKey]; ok {
 		cByte := []byte(cStr)
 		retErr := json.Unmarshal(cByte, &retIC)
@@ -85,7 +88,7 @@ func (llong *LlongDockerClient) GetImageConfig(image string, tag string) (ImageC
 	return retIC, retErr
 }
 
-func (llong *LlongDockerClient) getImageLabels(image string, tag string) map[string]string {
+func (llong *LlongDockerClient) getImageLabels(image string, tag string) (map[string]string, error) {
 	returnMap := make(map[string]string)
 	fullImagePath := image + ":" + tag
 	pullOpts := docker.PullImageOptions{
@@ -94,12 +97,12 @@ func (llong *LlongDockerClient) getImageLabels(image string, tag string) map[str
 	}
 	err := llong.dockerCli.PullImage(pullOpts, llong.dockerAuth)
 	if err != nil {
-		return returnMap
+		return returnMap, err
 	}
 	imageMeta, err := llong.dockerCli.InspectImage(fullImagePath)
 	if err != nil {
-		return returnMap
+		return returnMap, err
 	}
 	go llong.dockerCli.RemoveImageExtended(fullImagePath, docker.RemoveImageOptions{Force: true})
-	return imageMeta.Config.Labels
+	return imageMeta.Config.Labels, err
 }
