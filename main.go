@@ -13,10 +13,11 @@ const imageConfigKey string = "uk.co.oneiota-config"
 
 // ImageConfig - which is on the image label
 type ImageConfig struct {
-	AppName        string `json:"applicationName"`
-	AppDescription string `json:"applicationDescription"`
-	HostPort       int    `json:"hostPort"`
-	ContainerPort  int    `json:"containerPort"`
+	AppName        string          `json:"applicationName"`
+	AppDescription string          `json:"applicationDescription"`
+	HostPort       int             `json:"hostPort"`
+	ContainerPort  int             `json:"containerPort"`
+	Dependencies   map[string]bool `json:"dependencies"`
 	Image          string
 	Env            string
 }
