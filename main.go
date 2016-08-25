@@ -11,10 +11,14 @@ import (
 
 const imageConfigKey string = "uk.co.oneiota-config"
 
-// ImageConfig - which is on the label
+// ImageConfig - which is on the image label
 type ImageConfig struct {
-	AppName     string   `json:"applicationName"`
-	PortMapping []string `json:"portMapping"`
+	AppName        string `json:"applicationName"`
+	AppDescription string `json:"applicationDescription"`
+	HostPort       int    `json:"hostPort"`
+	ContainerPort  int    `json:"containerPort"`
+	Image          string
+	Env            string
 }
 
 // LlongDockerClient - client to do all the things
